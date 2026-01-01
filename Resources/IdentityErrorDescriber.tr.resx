@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter</value>
+  </resheader>
+
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>Şifre en az {0} karakter olmalıdır.</value>
+  </data>
+
+  <data name="PasswordRequiresDigit" xml:space="preserve">
+    <value>Şifre en az bir rakam içermelidir.</value>
+  </data>
+
+  <data name="PasswordRequiresUpper" xml:space="preserve">
+    <value>Şifre en az bir büyük harf içermelidir.</value>
+  </data>
+
+  <data name="PasswordRequiresLower" xml:space="preserve">
+    <value>Şifre en az bir küçük harf içermelidir.</value>
+  </data>
+
+  <data name="PasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>Şifre en az bir özel karakter içermelidir.</value>
+  </data>
+
+  <data name="DuplicateEmail" xml:space="preserve">
+    <value>Bu e-posta adresi zaten kayıtlı.</value>
+  </data>
+
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Geçersiz e-posta adresi.</value>
+  </data>
+
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>Şifreler uyuşmuyor.</value>
+  </data>
+
+  <data name="DefaultError" xml:space="preserve">
+    <value>Bir hata oluştu.</value>
+  </data>
+</root>

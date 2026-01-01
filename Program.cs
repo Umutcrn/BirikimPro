@@ -22,7 +22,21 @@ builder.Services
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
+
+
 var app = builder.Build();
+
+var supportedCultures = new[] { "tr-TR" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("tr-TR")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions);
 
 
 using (var scope = app.Services.CreateScope())
