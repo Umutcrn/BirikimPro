@@ -5,8 +5,12 @@ using BirikimPro.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Database
+var dbPath = Path.Combine(AppContext.BaseDirectory, "app.db");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite("Data Source=app.db"));
+    options.UseSqlite($"Data Source={dbPath}")
+);
+
 
 // Identity
 builder.Services
@@ -19,6 +23,14 @@ builder.Services
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
 
 if (!app.Environment.IsDevelopment())
 {
