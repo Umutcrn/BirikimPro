@@ -1,0 +1,7 @@
+# SQLite geçici dosyaları
+*.db-shm
+*.db-wal
+
+# .NET build klasörleri
+bin/
+obj/
