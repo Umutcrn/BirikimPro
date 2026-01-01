@@ -1,7 +1,16 @@
-# SQLite geçici dosyaları
+# .NET build çıktıları
+bin/
+obj/
+
+# SQLite
+*.db
 *.db-shm
 *.db-wal
 
-# .NET build klasörleri
-bin/
-obj/
+# Visual Studio / Rider
+.vs/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
