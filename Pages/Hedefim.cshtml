@@ -1,0 +1,316 @@
+@page
+@model BirikimPro.Pages.HedefimModel
+@{
+    ViewData["Title"] = "Hedeflerim";
+}
+
+<style>
+    body {
+        background: radial-gradient(circle at top,
+            #1e293b,
+            #0f172a 60%,
+            #020617 100%);
+        color: #e5e7eb;
+    }
+
+    .glass-card {
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(16px);
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+        transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 35px 70px rgba(0,0,0,0.55);
+    }
+
+    .progress {
+        height: 20px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.15);
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        font-weight: 600;
+        transition: width 1s ease;
+    }
+
+    .quick-btn {
+        background: rgba(255,255,255,0.12);
+        border: none;
+        color: #e5e7eb;
+        border-radius: 12px;
+        padding: .4rem .8rem;
+        transition: all .2s ease;
+    }
+
+    .quick-btn:hover {
+        background: #22c55e;
+        color: #022c22;
+        transform: scale(1.05);
+    }
+
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #ef4444;
+        font-size: .9rem;
+        opacity: .7;
+    }
+
+    .delete-btn:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <!-- YENİ HEDEF -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-5">
+            <div class="glass-card p-4">
+                <h4 class="text-center mb-3">🎯 Yeni Hedef</h4>
+
+                <form method="post">
+                    <div class="mb-3">
+                        <input asp-for="UrunAdi"
+                               class="form-control"
+                               placeholder="Ne alacaksın?"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <input asp-for="Fiyat"
+                               type="number"
+                               min="1"
+                               class="form-control"
+                               placeholder="Fiyat (₺)"
+                               required />
+                    </div>
+
+                    <button class="btn btn-success w-100">
+                        ➕ Hedef Ekle
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEDEFLER -->
+    <div class="row g-4 justify-content-center">
+
+        @if (Model.Hedefler.Count == 0)
+        {
+            <div class="col-md-6">
+                <div class="glass-card p-4 text-center">
+                    <h5>🚀 Henüz hedefin yok</h5>
+                    <p class="no-goal-text">
+                        Bir hedef belirle, birikim kendiliğinden motive eder.
+                    </p>
+                </div>
+            </div>
+        }
+
+        @foreach (var h in Model.Hedefler)
+        {
+            var yuzde = h.Fiyat > 0
+                ? Math.Min(100, Math.Round((h.Biriken * 100) / h.Fiyat))
+                : 0;
+
+            <div class="col-md-6">
+                <div class="glass-card p-4 hedef-card"
+                    data-complete="@(yuzde >= 100)">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>🎯 @h.UrunAdi</h5>
+                        @if (yuzde >= 100)
+                        {
+                            <span class="badge bg-success">TAMAMLANDI</span>
+                        }
+                    </div>
+
+                    <!-- 💸 PARA SATIRI (RENK DÜZELTİLDİ) -->
+                    <p style="color:#cbd5f5; font-weight:500;">
+                        @h.Biriken ₺ / @h.Fiyat ₺
+                    </p>
+
+                    <div class="progress mb-3">
+                        <div class="progress-bar
+                            @(yuzde >= 100 ? "bg-success"
+                            : yuzde >= 90 ? "bg-warning"
+                            : "bg-primary")"
+                            style="width:@yuzde%">
+                            @yuzde%
+                        </div>
+                    </div>
+
+                    <!-- ⚡ HIZLI EKLE -->
+                    <form method="post"
+                        asp-page-handler="Add"
+                        class="d-flex gap-2 mb-2">
+                        <input type="hidden" name="id" value="@h.Id" />
+
+                        <button name="ekleme" value="50"
+                                class="quick-btn">+50</button>
+                        <button name="ekleme" value="100"
+                                class="quick-btn">+100</button>
+                        <button name="ekleme" value="200"
+                                class="quick-btn">+200</button>
+                    </form>
+
+                    <!-- ✍️ MANUEL EKLE (İŞTE ARADIĞIN SATIR) -->
+                    <form method="post"
+                        asp-page-handler="Add"
+                        class="d-flex gap-2 mb-3">
+                        <input type="hidden" name="id" value="@h.Id" />
+
+                        <input type="number"
+                            name="ekleme"
+                            min="1"
+                            class="form-control"
+                            placeholder="Tutar gir (₺)" />
+
+                        <button class="btn btn-outline-light">
+                            Ekle
+                        </button>
+                    </form>
+                   
+
+                    <!-- SİL -->
+                    <form method="post"
+                          asp-page-handler="Delete"
+                          class="text-end">
+                        <input type="hidden" name="id" value="@h.Id" />
+                        <button class="delete-btn">
+                            🗑️ Hedefi Sil
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+<!-- 🎉 KONFETİ -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    function playConfettiOnce(uniqueKey) {
+
+        const storageKey = "confetti_goal_" + uniqueKey;
+
+        if (localStorage.getItem(storageKey)) return;
+
+        localStorage.setItem(storageKey, "true");
+
+        confetti({
+            particleCount: 160,
+            spread: 90,
+            origin: { y: 0.6 }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".hedef-card").forEach(card => {
+
+            if (card.dataset.complete === "True") {
+
+                // HER HEDEF İÇİN GERÇEKTEN BENZERSİZ
+                const uniqueKey =
+                    card.dataset.id + "_" +
+                    card.dataset.name.replaceAll(" ", "_");
+
+                playConfettiOnce(uniqueKey);
+            }
+
+        });
+    });
+</script>
+
+
+@if (Model.TamamlananHedefler.Count > 0)
+{
+    <div class="mt-5">
+        <h4 class="mb-3">🏆 Tamamlanan Hedefler</h4>
+
+        <div class="row g-3">
+            @foreach (var h in Model.TamamlananHedefler)
+            {
+                <div class="col-md-4">
+                    <div class="card gold-card h-100">
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold">@h.UrunAdi</h6>
+
+                            <p class="text-muted mb-1">
+                                @h.Fiyat ₺
+                            </p>
+
+                            <span class="badge gold-badge">
+                                🏆 Tamamlandı
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+<style>
+    .gold-card {
+        border: 2px solid transparent;
+        background:
+            linear-gradient(#111827, #111827) padding-box,
+            linear-gradient(135deg, #facc15, #f59e0b, #fde047) border-box;
+        border-radius: 16px;
+        box-shadow: 0 0 18px rgba(250,204,21,0.35);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .gold-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0 28px rgba(250,204,21,0.6);
+    }
+
+    .gold-badge {
+        background: linear-gradient(90deg, #facc15, #f59e0b);
+        color: #422006;
+        font-weight: 700;
+    }
+    /* ALTIN ARŞİV KARTLARI YAZI RENKLERİ */
+    .gold-card {
+        color: #f9fafb; /* ana yazılar */
+    }
+
+    .gold-card h6 {
+        color: #fde047; /* başlık altın sarısı */
+    }
+
+    .gold-card p {
+        color: #e5e7eb; /* fiyat / açıklama */
+    }
+
+     /* Altın arşiv kartlarındaki TÜM metinler */
+    .gold-card,
+    .gold-card * {
+        color: #e5e7eb !important;
+    }
+
+    /* Ürün adı daha parlak */
+    .gold-card h6 {
+        color: #fde047 !important;
+        font-weight: 700;
+    }
+
+    /* Para / tutar satırı */
+    .gold-card .price,
+    .gold-card p {
+        color: #f9fafb !important;
+    }
+</style>

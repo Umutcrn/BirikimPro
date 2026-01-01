@@ -1,0 +1,383 @@
+﻿@page
+@model BirikimPro.Pages.IndexModel
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<style>
+    /* === ANA ATMOSFER === */
+    body {
+        background: radial-gradient(circle at top,
+            #1e293b,
+            #0f172a 60%,
+            #020617 100%);
+        color: #e5e7eb;
+    }
+
+    /* HERO */
+    .hero {
+        padding: 5rem 1rem 4rem;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .hero span {
+        background: linear-gradient(90deg, #22c55e, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+        max-width: 600px;
+        margin: 1.5rem auto 0;
+        font-size: 1.1rem;
+        color: #cbd5f5;
+    }
+
+    /* KARTLAR */
+    .glass-card {
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(14px);
+        border-radius: 22px;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+
+    .glass-card h5 {
+        font-weight: 700;
+    }
+
+    /* PROGRESS */
+    .progress {
+        height: 18px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    /* BUTONLAR */
+    .btn-main {
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+        border: none;
+        color: #022c22;
+        font-weight: 600;
+    }
+
+    .btn-outline-light {
+        border-color: rgba(255,255,255,0.4);
+    }
+
+</style>
+<style>
+    .glass-card .text-muted {
+        color: #cbd5f5 !important;
+    }
+</style>
+
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+        <h1>
+            Hayaller pahalı değil, <br />
+            <span>plansızlık pahalı.</span>
+        </h1>
+
+        <p>
+            BirikimPro ile hedeflerini böl, yönet ve
+            adım adım ulaş. Kontrol sende.
+        </p>
+    </div>
+
+
+    @if (User.Identity!.IsAuthenticated)
+{
+        <!-- İSTATİSTİKLER -->
+    <div class="row g-4 mt-5 mb-5 justify-content-center">
+
+        <div class="col-md-3">
+            <div class="glass-card p-4 text-center h-100">
+                <h6 class="text-muted">💰 Toplam Birikim</h6>
+                <h3 class="fw-bold mt-2">
+                    @Model.ToplamBirikim ₺
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="glass-card p-4 text-center h-100">
+                <h6 class="text-muted">🎯 Aktif Hedef</h6>
+                <h3 class="fw-bold mt-2">
+                    @Model.AktifHedefSayisi
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="glass-card p-4 text-center h-100">
+                <h6 class="text-muted">🏆 Tamamlanan</h6>
+                <h3 class="fw-bold mt-2">
+                    @Model.TamamlananHedefSayisi
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="glass-card p-4 text-center h-100">
+                <h6 class="text-muted">📈 Ortalama İlerleme</h6>
+                <h3 class="fw-bold mt-2">
+                    %@Model.OrtalamaIlerleme
+                </h3>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- ÜST KARTLAR -->
+        <div class="row g-4 justify-content-center mb-4">
+
+            <!-- HEDEFLER -->
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+                    <h5>🎯 Hedeflerim</h5>
+                    <p class="text-muted">
+                        Birikim planlarını yönet
+                    </p>
+                    <a href="/Hedefim" class="btn btn-main btn-sm w-100">
+                        Hedeflerime Git
+                    </a>
+                </div>
+            </div>
+
+            <!-- ORTA -->
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+
+                    @if (Model.AktifHedef != null)
+                    {
+                        <h5 class="mb-2">
+                            🎯 @Model.AktifHedef.UrunAdi
+                        </h5>
+
+                        var yuzde = Model.AktifHedef.Fiyat > 0
+                            ? Math.Min(100,
+                                Math.Round((Model.AktifHedef.Biriken * 100)
+                                    / Model.AktifHedef.Fiyat))
+                            : 0;
+
+                        <p class="text-muted mb-2">
+                            @Model.AktifHedef.Biriken ₺ /
+                            @Model.AktifHedef.Fiyat ₺
+                        </p>
+
+                        <div class="progress mb-2">
+                            <div class="progress-bar @(yuzde >= 100 ? "bg-success" : yuzde >= 90 ? "bg-warning" : "bg-primary")"
+                                 style="width:@yuzde%">
+                                @yuzde%
+                            </div>
+                        </div>
+
+                        @if (yuzde >= 100)
+                        {
+                            <small class="text-success fw-bold">
+                                🎉 Hedef tamamlandı!
+                            </small>
+                        }
+                        else if (yuzde >= 90)
+                        {
+                            <small class="text-warning fw-bold">
+                                ⏳ Az kaldı!
+                            </small>
+                        }
+                    }
+                    else
+                    {
+                        <h5>🚀 İlk hedefini koy</h5>
+                        <p class="text-muted">
+                            Bir hedef koymak, her şeyi değiştirir.
+                        </p>
+                        <a href="/Hedefim"
+                           class="btn btn-outline-light btn-sm w-100">
+                            🎯 Hedef Belirle
+                        </a>
+                    }
+
+                </div>
+            </div>
+
+            <!-- PROFİL -->
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+                    <h5>👤 Profil</h5>
+                    <p class="text-muted">
+                        Hesap ve güvenlik ayarları
+                    </p>
+                    <a href="/Identity/Account/Manage"
+                       class="btn btn-outline-light btn-sm w-100">
+                        Profilime Git
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ALT KARTLAR -->
+        <div class="row g-4 mt-4 align-items-stretch">
+
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+                    <h6 class="text-muted">📆 Bu Ay Biriktirdin</h6>
+                    <h2 class="fw-bold mt-2">
+                        @Model.BuAyBirikim ₺
+                    </h2>
+                    <p class="small text-muted mt-1">
+                        Küçük adımlar büyük fark yaratır
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+                    <h6>⚡ Hızlı Birikim</h6>
+                    <form method="post"
+                          asp-page-handler="HizliEkle"
+                          class="d-flex justify-content-center gap-2 mt-3">
+                        <button name="tutar" value="50"
+                                class="btn btn-main btn-sm fast-btn">+50</button>
+                        <button name="tutar" value="100"
+                                class="btn btn-main btn-sm fast-btn">+100</button>
+                        <button name="tutar" value="200"
+                                class="btn btn-main btn-sm fast-btn">+200</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+                    <p class="fst-italic mb-0">
+                        “Bugün biriktirdiğin küçük şeyler,
+                        yarın büyük özgürlükler olur.”
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+<!-- PARA YAĞMURU -->
+<div id="money-rain"></div>
+
+<style>
+    #money-rain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 9999;
+    }
+
+    .money {
+        position: absolute;
+        top: -50px;
+        font-size: 26px;
+        animation: fall linear forwards;
+        opacity: 0.9;
+    }
+
+    @@keyframes fall {
+        to {
+            transform: translateY(110vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .welcome-toast {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(90deg,#22c55e,#16a34a);
+        color: #022c22;
+        padding: 14px 26px;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 15px 40px rgba(0,0,0,.4);
+        z-index: 10000;
+        animation: fadeUp 4s ease forwards;
+    }
+
+    @@keyframes fadeUp {
+        0% { opacity:0; transform:translate(-50%,20px); }
+        15% { opacity:1; transform:translate(-50%,0); }
+        85% { opacity:1; }
+        100% { opacity:0; transform:translate(-50%,-20px); }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // SADECE İLK GİRİŞTE
+        if (!localStorage.getItem("welcomeMoneyShown")) {
+
+            localStorage.setItem("welcomeMoneyShown", "true");
+
+            // Hoş geldin mesajı
+            const toast = document.createElement("div");
+            toast.className = "welcome-toast";
+            toast.innerText = "💸 BirikimPro’ya hoş geldin!";
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 4000);
+
+            // Para yağmuru
+            const rain = document.getElementById("money-rain");
+            const emojis = ["💸", "💰", "🪙"];
+
+            for (let i = 0; i < 40; i++) {
+                const m = document.createElement("div");
+                m.className = "money";
+                m.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                m.style.left = Math.random() * 100 + "vw";
+                m.style.animationDuration = (2 + Math.random() * 2) + "s";
+                m.style.animationDelay = Math.random() * 1.5 + "s";
+                rain.appendChild(m);
+
+                setTimeout(() => m.remove(), 5000);
+            }
+        }
+    });
+</script>
+
+
+<style>
+    .fast-btn {
+        padding: 14px 18px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        border-radius: 14px;
+        min-width: 80px;
+    }
+</style>
