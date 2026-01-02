@@ -63,6 +63,7 @@ builder.Services.AddLocalization(options =>
 
 var app = builder.Build();
 
+
 var cultures = new[] { new CultureInfo("tr-TR") };
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
@@ -71,7 +72,14 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = cultures
 });
 
-// ================= MIGRATION =================
+// ================= AUTO MIGRATION =================
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
 
 
 
