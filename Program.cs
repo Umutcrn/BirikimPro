@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+
+
 if (!string.IsNullOrEmpty(databaseUrl))
 {
     // 🔵 RENDER / PROD → POSTGRES
@@ -19,7 +21,7 @@ if (!string.IsNullOrEmpty(databaseUrl))
     var connectionStringBuilder = new NpgsqlConnectionStringBuilder
     {
         Host = databaseUri.Host,
-        Port = databaseUri.Port,
+        Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
         Username = userInfo[0],
         Password = userInfo[1],
         Database = databaseUri.AbsolutePath.Trim('/'),
@@ -93,4 +95,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
 app.Run();
