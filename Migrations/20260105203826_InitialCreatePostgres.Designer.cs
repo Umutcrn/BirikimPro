@@ -8,26 +8,23 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BirikimPro.Data.Migrations
+namespace BirikimPro.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251230121251_AylikBirikimEklendi")]
-    partial class AylikBirikimEklendi
+    [Migration("20260105203826_InitialCreatePostgres")]
+    partial class InitialCreatePostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
 
             modelBuilder.Entity("BirikimPro.Data.Hedef", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("AylikBirikim")
-                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("Biriken")
                         .HasColumnType("TEXT");
