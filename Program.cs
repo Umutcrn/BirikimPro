@@ -10,11 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-
-
 if (!string.IsNullOrEmpty(databaseUrl))
 {
-    // 🔵 RENDER / PROD → POSTGRES
+    // 🔵 RENDER / PROD → POSTGRES (Burası Render'da çalışacak kısım)
     var databaseUri = new Uri(databaseUrl);
     var userInfo = databaseUri.UserInfo.Split(':');
 
@@ -34,9 +32,11 @@ if (!string.IsNullOrEmpty(databaseUrl))
 }
 else
 {
-    // 🟢 LOCAL → SQLITE
+    // 🟡 LOCAL (MIGRATION İÇİN GEÇİCİ AYAR)
+    // Bilgisayarında Postgres kurulu olmasa bile Migration'ın doğru (Boolean) üretilmesini sağlar.
+    // DİKKAT: Bu kodla uygulamayı localde çalıştıramazsın, sadece terminal komutu için bu hale getirdik.
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite("Data Source=app.db"));
+        options.UseNpgsql("Host=localhost;Database=TempDb;Username=postgres;Password=password"));
 }
 
 // ================= IDENTITY =================
@@ -63,7 +63,6 @@ builder.Services.AddLocalization(options =>
 
 var app = builder.Build();
 
-
 var cultures = new[] { new CultureInfo("tr-TR") };
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
@@ -73,14 +72,23 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 });
 
 // ================= AUTO MIGRATION =================
-
-using (var scope = app.Services.CreateScope())
+// Hata almamak için migration komutu sırasında burayı try-catch içine aldık
+try
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        // Eğer veritabanı bağlantısı yoksa (localde yok) burayı atlasın diye kontrol
+        if(databaseUrl != null) 
+        {
+             db.Database.Migrate();
+        }
+    }
 }
-
-
+catch
+{
+    // Localde hata verirse yoksay, önemli olan Migration dosyasının oluşması.
+}
 
 
 // ================= PIPELINE =================
@@ -97,13 +105,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
-
 
 app.MapRazorPages();
 
