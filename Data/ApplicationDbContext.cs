@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BirikimPro.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext 
+        : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
